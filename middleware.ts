@@ -1,6 +1,9 @@
+import { supabaseMiddlewareClient } from '@/lib/clients/supabase/middleware'
 import { env } from '@/lib/env'
+import AdminMiddleware from '@/lib/middlewares/admin-middleware'
 import HomeMiddleware from '@/lib/middlewares/home-middleware'
-import { NextResponse, type NextRequest } from 'next/server'
+import OrganizationMiddleware from '@/lib/middlewares/organization-middleware'
+import { type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host')!
@@ -9,11 +12,19 @@ export async function middleware(request: NextRequest) {
     host === env.NEXT_PUBLIC_ROOT_DOMAIN ||
     host === `www.${env.NEXT_PUBLIC_ROOT_DOMAIN}`
 
+  const isAdminRoute = host === `admin.${env.NEXT_PUBLIC_ROOT_DOMAIN}`
+
   if (isHomeRoute) {
     return HomeMiddleware(request)
   }
 
-  return NextResponse.next()
+  const { user, response } = await supabaseMiddlewareClient(request)
+
+  if (isAdminRoute) {
+    return AdminMiddleware(request, user, response)
+  }
+
+  return OrganizationMiddleware(request, user, response)
 }
 
 export const config = {

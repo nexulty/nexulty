@@ -9,13 +9,211 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      organizations: {
+        Row: {
+          created_at: string
+          domain: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      ticket_categories: {
+        Row: {
+          created_at: string
+          group: string | null
+          id: string
+          name: string
+          organization: string
+        }
+        Insert: {
+          created_at?: string
+          group?: string | null
+          id?: string
+          name: string
+          organization: string
+        }
+        Update: {
+          created_at?: string
+          group?: string | null
+          id?: string
+          name?: string
+          organization?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_categories_group_fkey"
+            columns: ["group"]
+            isOneToOne: false
+            referencedRelation: "ticket_category_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_categories_organization_fkey"
+            columns: ["organization"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_category_groups: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          organization: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          organization: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          organization?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_category_groups_organization_fkey"
+            columns: ["organization"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          organization: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          organization: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          organization?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_types_organization_fkey"
+            columns: ["organization"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          organization: string
+          subject: string
+          type: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          organization: string
+          subject: string
+          type: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          organization?: string
+          subject?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "ticket_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_organization_fkey"
+            columns: ["organization"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_type_fkey"
+            columns: ["type"]
+            isOneToOne: false
+            referencedRelation: "ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          organization: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          organization: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          organization?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_organization_fkey"
+            columns: ["organization"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_organization_user: {
+        Args: { _user: string; _organization: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

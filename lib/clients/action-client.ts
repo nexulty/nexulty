@@ -1,4 +1,6 @@
+import { getDomain } from '@/utils'
 import { createSafeActionClient } from 'next-safe-action'
+import { headers } from 'next/headers'
 import { z } from 'zod'
 
 export const actionClient = createSafeActionClient({
@@ -12,4 +14,14 @@ export const actionClient = createSafeActionClient({
 
     return error.message
   },
+}).use(async ({ next }) => {
+  const headersList = await headers()
+  const host = headersList.get('host')!
+  const domain = getDomain(host)
+
+  return next({
+    ctx: {
+      domain,
+    },
+  })
 })
